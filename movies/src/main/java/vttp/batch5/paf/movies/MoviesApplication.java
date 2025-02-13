@@ -24,8 +24,8 @@ public class MoviesApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		String filePath = "../data/movies_post_2010.zip";
-		//NOTE - assumes user knows the path. for deployment to work, user needs to point to the right location.
-		// my default path directory points to a zip file in my resources
+		//FIXME:- assumes user knows the path. for deployment to work, user needs to point to the right location.
+		// added a copy of the json to the resources for users to access after deployment
 		if (args.length>0){
 			filePath = args[0];
 		}
