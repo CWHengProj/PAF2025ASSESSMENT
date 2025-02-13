@@ -8,4 +8,7 @@ public class Queries {
             insert into imdb (imdb_id,vote_average,vote_count,release_date,revenue,budget,runtime)
                         values(?,?,?,?,?,?,?);
             """;
+    public static final String GET_DIRECTOR_DATA = """
+                    select * from imdb;
+                    """;;
 }

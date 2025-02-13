@@ -23,8 +23,14 @@ public class MoviesApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		String filePath = args[0];
+		String filePath = "../data/movies_post_2010.zip";
+		//NOTE - assumes user knows the path. for deployment to work, user needs to point to the right location.
+		// my default path directory points to a zip file in my resources
+		if (args.length>0){
+			filePath = args[0];
+		}
 		// run the Dataloader application
+		System.out.println(filePath);
 		System.out.println("running the data loader...");
 		List<JsonObject> jsonList =dLoader.unzipLoader(filePath);
 		List<JsonObject> filteredJson = mService.filterOldMovies(jsonList);

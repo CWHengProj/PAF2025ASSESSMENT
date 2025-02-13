@@ -6,12 +6,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.json.JsonObject;
+import vttp.batch5.paf.movies.Model.DirectorStats;
 import vttp.batch5.paf.movies.repositories.MongoMovieRepository;
 import vttp.batch5.paf.movies.repositories.MySQLMovieRepository;
 @Service
@@ -81,16 +81,30 @@ public List<JsonObject> filterOldMovies(List<JsonObject> jsonList) {
   // TODO: Task 3
   // You may change the signature of this method by passing any number of parameters
   // and returning any type
-  public void getProlificDirectors() {
-    
+
+  public List<DirectorStats> getProlificDirectors(Integer numberOfDirectors) {
+    return sqlRepo.getDirectorStats(numberOfDirectors);
   }
 
 
   // TODO: Task 4
   // You may change the signature of this method by passing any number of parameters
   // and returning any type
-  public void generatePDFReport() {
+  public void generatePDFReport(String name, String batch) {
+    // JsonDataSource reportDs = new JsonDataSource();
+    // JsonDataSource directorDs = new JsonDataSource();
+    // Map<String,Object> params = new HashMap<>();
+    // params.put("DIRECTOR_TABLE_DATASET", directorDs);
+    // JasperReport report =
+    // JasperPrint print = JasperFillManager.fillReport(report, params, reportDs);
 
+//     @Bean
+// public DataSource dataSource() {
+// return new EmbeddedDatabaseBuilder()
+// .setType(EmbeddedDatabaseType.HSQL)
+// .addScript("classpath:employee-schema.sql")
+// .build();
+// }
   }
 
 

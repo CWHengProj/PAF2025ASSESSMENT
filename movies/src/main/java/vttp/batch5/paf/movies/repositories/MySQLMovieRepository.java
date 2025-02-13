@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import jakarta.json.JsonObject;
 import vttp.batch5.paf.movies.Constants.Queries;
 import vttp.batch5.paf.movies.Model.Arguments;
+import vttp.batch5.paf.movies.Model.DirectorStats;
 
 @Repository
 public class MySQLMovieRepository {
@@ -37,17 +37,23 @@ public class MySQLMovieRepository {
       LocalDate release_date= LocalDate.parse(rd, formatter);
       float revenue = Float.parseFloat(j.getString("revenue"));
       float budget = Float.parseFloat(j.getString("budget"));
-      int runtime = j.getInt("runtime");
+      int runtime = j.getInt("runtime");      
       Arguments args = new Arguments(imdb_id,vote_average,vote_count,release_date,revenue,budget,runtime);
       batchHolder.add(args);
-      if (((batchHolder.size())%25)==0){
-        //perform a batch update
-        template.batchUpdate(Queries.ADD_TO_MYSQL,batchHolder);
-        batchHolder.clear();
-      }
     }
-    //perform one more batch update here
-    template.batchUpdate(Queries.ADD_TO_MYSQL,batchHolder);
+ 
+    template.batchUpdate(Queries.ADD_TO_MYSQL,batchHolder,25,        
+    (PreparedStatement ps, Arguments arg) -> {
+      ps.setString(1, arg.getImdb_id());
+      ps.setFloat(2, arg.getVote_average());
+      ps.setInt(3, arg.getVote_count());
+      ps.setDate(4, java.sql.Date.valueOf(arg.getRelease_date()));
+      ps.setFloat(5, arg.getRevenue());
+      ps.setFloat(6, arg.getBudget());
+      ps.setInt(7, arg.getRuntime());
+    });
+
+
   }
 
   public boolean isDataLoadedinMySQL(String title) {
@@ -57,8 +63,25 @@ public class MySQLMovieRepository {
     }
     return true;
   }
-  
+
   // TODO: Task 3
+public List<DirectorStats> getDirectorStats(Integer numberOfDirectors) {
+  List<DirectorStats> stats = new ArrayList<>();
+  SqlRowSet rs = template.queryForRowSet(Queries.GET_DIRECTOR_DATA, numberOfDirectors);
+  while(rs.next()){
+    DirectorStats d = new DirectorStats();
+    d.setDirector_name(rs.getString("director_name"));
+    d.setMovies_count(rs.getInt("movies_count"));
+    d.setTotal_budget(rs.getFloat("total_revenue"));
+    d.setTotal_revenue(rs.getFloat("total_budget"));
+    stats.add(d);
+    if (stats.size()==numberOfDirectors){
+      break;
+    }
+  }
+  return stats;
+}
+  
 
 
 }
